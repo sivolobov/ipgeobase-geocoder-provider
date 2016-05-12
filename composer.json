@@ -1,0 +1,23 @@
+{
+    "name": "sivolobov/geocoder-ipgeobase",
+    "description": "Geocoder provider for IpGeoBase service (Russia).",
+    "require": {
+        "willdurand/geocoder": "~3.0"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "~2.0"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikhail A. Sivolobov",
+            "email": "astronomer@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Geocoder": "src/" }
+    }
+}
