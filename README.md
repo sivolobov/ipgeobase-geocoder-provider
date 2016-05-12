@@ -1,6 +1,8 @@
 Geocoder IpGeoBase provider
 ==============
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/9ea6d698-549e-4cbf-bd02-acb1938844bb/big.png)](https://insight.sensiolabs.com/projects/9ea6d698-549e-4cbf-bd02-acb1938844bb)
+
 This repository hosts IpGeoBase provider to use with Geocoder library.
 
 Installation
