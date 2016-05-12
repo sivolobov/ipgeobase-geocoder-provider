@@ -7,25 +7,56 @@
  */
 
 namespace Geocoder\Provider;
+
+use Geocoder\Exception\UnexpectedValue;
 use Geocoder\Exception\UnsupportedOperation;
-use Geocoder\Model\AddressCollection;
+use Geocoder\Exceptions\ImmutableChanged;
 
 
 /**
  * Class that provides IpGeoBase service as Geocoder Provider
  */
-class IpGeoBase implements Provider
+class IpGeoBase extends AbstractHttpProvider implements Provider
 {
+    const MAX_RESULTS_IN_ADDRESS_COLLECTION = 1;
+    const ENDPOINT_URL = 'http://ipgeobase.ru:7020/geo?ip=%s';
+
     /**
      * @inheritDoc
      */
     public function geocode($address)
     {
         if (!filter_var($address, FILTER_VALIDATE_IP)) {
-            throw new UnsupportedOperation('The FreeGeoIp provider does not support street addresses.');
+            throw new UnsupportedOperation('The IpGeoBaseSpec provider does not support street addresses.');
         }
 
-        return new AddressCollection();
+        if (in_array($address, array('127.0.0.1', '::1'))) {
+            return $this->returnResults([$this->getLocalhostDefaults()]);
+        }
+
+        $body = $this->getAdapter()->get(sprintf(self::ENDPOINT_URL, $address))->getBody();
+
+        try {
+            $xml = new \SimpleXmlElement($body);
+        } catch (\Exception $e) {
+            throw new UnexpectedValue('Can\'t parse the result');
+        }
+
+        $result = $xml->ip;
+
+        return $this->returnResults(
+            [
+                array_merge(
+                    $this->getDefaults(),
+                    [
+                        'latitude' => (double)$result->lat,
+                        'longitude' => (double)$result->lng,
+                        'locality' => (string)$result->city,
+                        'countryCode' => (string)$result->country,
+                    ]
+                )
+            ]
+        );
     }
 
     /**
@@ -33,7 +64,7 @@ class IpGeoBase implements Provider
      */
     public function reverse($latitude, $longitude)
     {
-        // TODO: Implement reverse() method.
+        throw new UnsupportedOperation('The IpGeoBaseSpec provider is not able to do reverse geocoding.');
     }
 
     /**
@@ -41,7 +72,7 @@ class IpGeoBase implements Provider
      */
     public function getLimit()
     {
-        // TODO: Implement getLimit() method.
+        return self::MAX_RESULTS_IN_ADDRESS_COLLECTION;
     }
 
     /**
@@ -49,7 +80,7 @@ class IpGeoBase implements Provider
      */
     public function limit($limit)
     {
-        // TODO: Implement limit() method.
+        throw new ImmutableChanged('IpGeoBase always have only 1 result for one IP-address');
     }
 
     /**
@@ -57,7 +88,7 @@ class IpGeoBase implements Provider
      */
     public function getName()
     {
-        // TODO: Implement getName() method.
+        return 'ip_geo_base';
     }
 
 }

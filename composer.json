@@ -5,7 +5,8 @@
         "willdurand/geocoder": "~3.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "~2.0"
+        "phpspec/phpspec": "~2.0",
+        "coduo/phpspec-data-provider-extension": "^1.0"
     },
     "config": {
         "bin-dir": "bin"

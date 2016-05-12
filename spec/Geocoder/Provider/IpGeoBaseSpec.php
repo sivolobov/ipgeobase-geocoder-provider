@@ -2,6 +2,7 @@
 
 namespace spec\Geocoder\Provider;
 
+use Ivory\HttpAdapter\CurlHttpAdapter;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -17,9 +18,22 @@ class IpGeoBaseSpec extends ObjectBehavior
         $this->shouldImplement('Geocoder\Provider\Provider');
     }
 
-    function it_retrieves_address_collection_by_ip()
+    function it_should_be_instance_of_abstract_http_provider()
     {
-        $this->geocode('91.221.60.82')->shouldHaveType('Geocoder\Model\AddressCollection');
+        $this->shouldHaveType('Geocoder\Provider\AbstractHttpProvider');
+    }
+    
+    function let()
+    {
+        $this->beConstructedWith(new CurlHttpAdapter());
+    }
+
+    /**
+     * @dataProvider ipToCityExamples
+     */
+    function it_retrieves_address_collection_by_ip($ip)
+    {
+        $this->geocode($ip)->shouldHaveType('Geocoder\Model\AddressCollection');
     }
 
     function it_throws_an_exception_while_trying_to_pass_not_an_ip()
@@ -38,5 +52,49 @@ class IpGeoBaseSpec extends ObjectBehavior
     function it_returns_one_on_requesting_maximum_amount_that_can_be_returned_in_address_collection()
     {
         $this->getLimit()->shouldReturn(1);
+    }
+
+    /**
+     * @dataProvider ipToCityExamples
+     */
+    function it_returns_only_one_address_in_collection($ip)
+    {
+        $this->geocode($ip)->count()->shouldReturn(1);
+    }
+
+    function it_returns_name_ip_geo_base_with_underscores()
+    {
+        $this->getName()->shouldReturn('ip_geo_base');
+    }
+
+    function it_throws_exception_while_trying_to_change_limit()
+    {
+        $this->shouldThrow('Geocoder\Exceptions\ImmutableChanged')->during('limit', [1]);
+    }
+
+    /**
+     * @dataProvider ipToCityExamples
+     */
+    function it_returns_proper_city_names_for_russian_ips($ip, $city)
+    {
+        $this->geocode($ip)->first()->getLocality()->shouldReturn($city);
+    }
+
+    function it_returns_defaults_while_passing_localhost_ip()
+    {
+        $this->geocode('127.0.0.1')->first()->getLocality()->shouldReturn('localhost');
+        $this->geocode('127.0.0.1')->first()->getCountry()->getName()->shouldReturn('localhost');
+        $this->geocode('::1')->first()->getLocality()->shouldReturn('localhost');
+        $this->geocode('::1')->first()->getCountry()->getName()->shouldReturn('localhost');
+    }
+
+    public function ipToCityExamples()
+    {
+        return [
+            ['109.227.227.191', 'Томск'],
+            ['91.221.60.82', 'Томск'],
+            ['213.180.193.3', 'Москва'],
+            ['195.93.187.10', 'Новосибирск'],
+        ];
     }
 }
