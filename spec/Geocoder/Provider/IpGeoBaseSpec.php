@@ -49,11 +49,6 @@ class IpGeoBaseSpec extends ObjectBehavior
         $this->shouldThrow('Geocoder\Exception\UnsupportedOperation')->during('reverse', [56.5, 82.5]);
     }
 
-    function it_returns_one_on_requesting_maximum_amount_that_can_be_returned_in_address_collection()
-    {
-        $this->getLimit()->shouldReturn(1);
-    }
-
     /**
      * @dataProvider ipToCityExamples
      */
@@ -65,11 +60,6 @@ class IpGeoBaseSpec extends ObjectBehavior
     function it_returns_name_ip_geo_base_with_underscores()
     {
         $this->getName()->shouldReturn('ip_geo_base');
-    }
-
-    function it_throws_exception_while_trying_to_change_limit()
-    {
-        $this->shouldThrow('Geocoder\Exceptions\ImmutableChanged')->during('limit', [1]);
     }
 
     /**

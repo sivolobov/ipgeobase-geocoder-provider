@@ -18,7 +18,6 @@ use Geocoder\Exceptions\ImmutableChanged;
  */
 class IpGeoBase extends AbstractHttpProvider implements Provider
 {
-    const MAX_RESULTS_IN_ADDRESS_COLLECTION = 1;
     const ENDPOINT_URL = 'http://ipgeobase.ru:7020/geo?ip=%s';
 
     /**
@@ -65,22 +64,6 @@ class IpGeoBase extends AbstractHttpProvider implements Provider
     public function reverse($latitude, $longitude)
     {
         throw new UnsupportedOperation('The IpGeoBaseSpec provider is not able to do reverse geocoding.');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLimit()
-    {
-        return self::MAX_RESULTS_IN_ADDRESS_COLLECTION;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function limit($limit)
-    {
-        throw new ImmutableChanged('IpGeoBase always have only 1 result for one IP-address');
     }
 
     /**
