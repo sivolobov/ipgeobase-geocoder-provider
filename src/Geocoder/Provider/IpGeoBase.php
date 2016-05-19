@@ -10,7 +10,6 @@ namespace Geocoder\Provider;
 
 use Geocoder\Exception\UnexpectedValue;
 use Geocoder\Exception\UnsupportedOperation;
-use Geocoder\Exceptions\ImmutableChanged;
 
 
 /**
