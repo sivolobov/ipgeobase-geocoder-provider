@@ -2,7 +2,7 @@
     "name": "sivolobov/geocoder-ipgeobase",
     "description": "Geocoder provider for IpGeoBase service (Russia).",
     "require": {
-        "willdurand/geocoder": "^3.0"
+        "willdurand/geocoder": "~4.0"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.0",
